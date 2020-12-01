@@ -50,7 +50,7 @@ class AuthGuard extends RouteGuard {
     if(SPUtils.isCreated()){
       return true;
     }else{
-      navigator.pushReplacementNamed(Routes.registerPage);
+      navigator.pushReplacementNamed(Routes.loginPage);
       return false;
     }
     // if (SPUtils.isLogined()) {

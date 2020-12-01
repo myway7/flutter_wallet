@@ -1,4 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_template/core/http/http.dart';
+import 'package:flutter_template/core/utils/toast.dart';
+import 'package:flutter_template/core/widget/loading_page.dart';
+import 'package:flutter_template/utils/sputils.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class SendPage extends StatefulWidget {
   final String address;
@@ -22,7 +32,7 @@ class _SendPage extends State{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Scaffold(
+    return FlutterEasyLoading(child:new Scaffold(
       appBar: AppBar(
         title: new Text("转账",style: TextStyle(fontSize: 18),),
         leading: IconButton(
@@ -42,6 +52,7 @@ class _SendPage extends State{
         },
         child: buildTextFild(context),
       ),
+    ),
     );
   }
 
@@ -74,7 +85,7 @@ class _SendPage extends State{
                         child: IconButton(
                           icon: Icon(Icons.photo_camera),
                           onPressed: ()=>{
-
+                            ToastUtils.toast("正在开发中。。。"),
                           },
                         ),
                       )
@@ -144,10 +155,8 @@ class _SendPage extends State{
                         onPressed: ()=>{
                         FocusScope.of(context).requestFocus(FocusNode()),
                           //对用户输入的信息进行校验
+                          getSign(),
                           //todo
-                          print(_toAddressController.text),
-                          print(_enterAmountController.text),
-                          print(gasValue)
 
                         },
                       ),
@@ -162,6 +171,62 @@ class _SendPage extends State{
     );
   }
  //函数定义
+   void getSign() async{
+    Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
+    var  keyStore = jsonEncode(_boolList["keystore"]);
+    var paswwd = "123456";
+    var type = "BOOL";
+    var rpcUrl="wss://rpc-bool.bool.network";
+    var amout = _enterAmountController.text.toString();
+    var to = _toAddressController.text.toString();
+    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "BOOL","rpcUrl":"wss://rpc-bool.bool.network","amout":"$amout","to":"$to"}';
+
+    // startSign(password,keyStore,type,rpcUrl,amount,to)
+    // $paswd,$keyStore,$type,$rpcUrl,$amout,$to
+    final flutterWebViewPlugin = FlutterWebviewPlugin();
+    await flutterWebViewPlugin.evalJavascript("wallet.startSign($data)");
+    // var signMessage = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+    // var sign = jsonDecode(signMessage);
+    EasyLoading.show(status: '交易中...');
+    // print(keyStore);
+    //dart获取js异步函数返回值的方式
+    //方式1：通过倒计时的方式
+    const timeout = const Duration(seconds: 30);
+    print("currentTimer =" + DateTime.now().toString());
+    Timer(timeout, () async {
+      //倒计时结束
+      var signM = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+      Map<String,dynamic> sign = jsonDecode(signM);
+      print("sign--------");
+      print(sign);
+      if(sign['sign'] != "0"){
+        // Dio dio = new Dio();
+        XHttp.postJson("/bool-main/wallet/transfer",{
+          "chain": "BOOL",
+          "singedData":sign['sign'],
+        }).then((response) => {
+          if(response['code'] == 200){
+            ToastUtils.toast("转账成功"),
+          }else if(response['code'] == -100){
+            ToastUtils.toast("转账费用不够"),
+          }else{
+            ToastUtils.toast("转账失败"),
+          },
+          print(response),
+
+        });
+      }
+      EasyLoading.dismiss();
+      print("afterTimer =" + DateTime.now().toString() );
+    });
+     //方式2：通过轮询的方式
+    // while(sign=="0"){
+    //   sign = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+    //   print("sign---"+sign);
+    // }
+
+
+  }
   //点击空白处，关闭键盘
   void closeKeyboard(BuildContext context) {
     print("进去关闭键盘的方法");

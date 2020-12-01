@@ -6,9 +6,12 @@ import 'package:flutter_template/core/utils/path.dart';
 class XHttp {
   XHttp._internal();
 
+  ///测试网 http://test-api.buer.network:789
+  /// 正式网 https://api.bool.network
+  ///bool-main/wallet/transfer
   ///网络请求配置
   static final Dio dio = Dio(BaseOptions(
-    baseUrl: "https://www.wanandroid.com",
+    baseUrl: "https://api.bool.network",
     connectTimeout: 5000,
     receiveTimeout: 3000,
   ));

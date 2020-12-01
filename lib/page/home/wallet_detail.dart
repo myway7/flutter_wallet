@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_template/core/http/http.dart';
 import 'package:flutter_template/router/router.dart';
 import 'package:flutter_template/utils/sputils.dart';
 import 'dart:convert';
@@ -14,12 +15,32 @@ class WalletDetail extends StatefulWidget{
 }
 
 class _WalletDetail extends State<WalletDetail>{
+  String _balance = '';
 
   @override
   initState() {
     super.initState();
     print(widget.address);
     print(widget.imageUrl);
+    XHttp.postJson("/bool-main/wallet/assets",
+        {
+          "legalCurrency": "USD",
+          "queryList": [{
+            "address": widget.address,
+            "chain": widget.tokenName,
+            "extraInfo": ""
+          }]
+        }
+    ).then((response) => {
+      if(response['code'] == 200){
+       setState((){
+         _balance = response['data']['infoList'][0]['balance'];
+       }),
+        print(response['data']['infoList'][0]['balance']),
+      }
+    }
+    );
+
   }
   @override
   Widget build(BuildContext context) {
@@ -59,7 +80,7 @@ class _WalletDetail extends State<WalletDetail>{
                         // data.balance != null ? new Text(""):new Text("00.000"),
                         new Container(
                           margin: EdgeInsets.only(top: 5),
-                          child: new Text("≈"+"00.000"),
+                          child: new Text("≈"+_balance),
                         )
                       ],
                     ),
@@ -83,6 +104,7 @@ class _WalletDetail extends State<WalletDetail>{
                               child: new Text("接收"),
                               onPressed: ()=>{
                                 // var bool = JSON.decode()
+
                                 XRouter.router.navigateTo(context, "/tokenReceive?address=${Uri.encodeComponent(widget.address.toString().replaceAll('"', ""))}",transition: TransitionType.inFromRight)
                               },
                             ),

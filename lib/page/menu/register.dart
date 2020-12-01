@@ -38,6 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
         title: Text(I18n.of(context).createWallet),
       ),
       body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           // 点击空白页面关闭键盘
           closeKeyboard(context);
@@ -130,11 +131,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     textColor: Colors.white,
                     onPressed: () {
                       //由于本widget也是Form的子代widget，所以可以通过下面方式获取FormState
-                      // if (Form.of(context).validate()) {
-                      //   // onSubmit(context);
-                      //   createWallet(context);
-                      // }
-                      createWallet(context);
+                      if (Form.of(context).validate()) {
+                        // onSubmit(context);
+                        createWallet(context,_unameController.text.toString(),_pwdController.text.toString());
+                      }
                     },
                   );
                 })),
@@ -164,24 +164,28 @@ class _RegisterPageState extends State<RegisterPage> {
     FocusScope.of(context).requestFocus(blankNode);
   }
   //创建钱包
-  void createWallet( BuildContext context){
+  void createWallet( BuildContext context,String userName,String passwd){
     closeKeyboard(context);
     print("进入 CallJS");
     print("打印助记词");
     const ETH = "ETH";
+    const timeout = const Duration(seconds: 3);
     //FlutterWebviewPlugin是一个单例
     final flutterWebViewPlugin = FlutterWebviewPlugin();
     flutterWebViewPlugin.evalJavascript("wallet.getMnemonic()").then((value) =>{
       SPUtils.saveMnemonic(value),
       print(value),
-      Duration(seconds: 2),
-      flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("you","123456",$value)').then((value) =>{
-        flutterWebViewPlugin.evalJavascript('wallet.getBoolAccount()').then((value) => {
-          SPUtils.saveBool(value),
-          XRouter.navigator.pushReplacementNamed(Routes.mainHomePage),
-          print("打印bool账户"),
-          print(value),
-        })
+      flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("$userName","$passwd",$value)').then((value) =>{
+      Timer(timeout, () async {
+      flutterWebViewPlugin.evalJavascript('wallet.getBoolAccount()').then((value) => {
+        SPUtils.saveBool(value),
+        XRouter.navigator.pushReplacementNamed(Routes.mainHomePage),
+        print("打印bool账户"),
+        print(value),
+        ToastUtils.toast("钱包创建成功，请注意不要忘记备份！"),
+      });
+    }),
+
       }),
 
     });
