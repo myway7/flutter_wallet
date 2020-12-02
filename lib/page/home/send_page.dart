@@ -9,6 +9,7 @@ import 'package:flutter_template/core/utils/toast.dart';
 import 'package:flutter_template/core/widget/loading_page.dart';
 import 'package:flutter_template/utils/sputils.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'dart:io';
 
 class SendPage extends StatefulWidget {
   final String address;
@@ -155,7 +156,12 @@ class _SendPage extends State{
                         onPressed: ()=>{
                         FocusScope.of(context).requestFocus(FocusNode()),
                           //对用户输入的信息进行校验
-                          getSign(),
+                        if(Platform.isAndroid){
+                          getSignForAndroid(),
+                        }else if(Platform.isIOS){
+                          getSignForIOS(),
+                        },
+
                           //todo
 
                         },
@@ -171,7 +177,7 @@ class _SendPage extends State{
     );
   }
  //函数定义
-   void getSign() async{
+   void getSignForAndroid() async{
     Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
     var  keyStore = jsonEncode(_boolList["keystore"]);
     var paswwd = "123456";
@@ -196,7 +202,7 @@ class _SendPage extends State{
     Timer(timeout, () async {
       //倒计时结束
       var signM = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
-      Map<String,dynamic> sign = jsonDecode(signM);
+      Map<String,dynamic> sign = jsonDecode(jsonDecode(signM));
       print("sign--------");
       print(sign);
       if(sign['sign'] != "0"){
@@ -213,13 +219,74 @@ class _SendPage extends State{
             ToastUtils.toast("转账失败"),
           },
           print(response),
-
         });
+      }else{
+        ToastUtils.toast("签名超时！");
       }
       EasyLoading.dismiss();
       print("afterTimer =" + DateTime.now().toString() );
     });
      //方式2：通过轮询的方式
+    // while(sign=="0"){
+    //   sign = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+    //   print("sign---"+sign);
+    // }
+
+
+  }
+
+  void getSignForIOS() async{
+    Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
+    var  keyStore = jsonEncode(_boolList["keystore"]);
+    print(keyStore);
+    var paswwd = "123456";
+    var type = "BOOL";
+    var rpcUrl="wss://rpc-bool.bool.network";
+    var amout = _enterAmountController.text.toString();
+    var to = _toAddressController.text.toString();
+    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "BOOL","rpcUrl":"wss://rpc-bool.bool.network","amout":"$amout","to":"$to"}';
+
+    // startSign(password,keyStore,type,rpcUrl,amount,to)
+    // $paswd,$keyStore,$type,$rpcUrl,$amout,$to
+    final flutterWebViewPlugin = FlutterWebviewPlugin();
+    await flutterWebViewPlugin.evalJavascript("wallet.startSign($data)");
+    // var signMessage = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+    // var sign = jsonDecode(signMessage);
+    EasyLoading.show(status: '交易中...');
+    // print(keyStore);
+    //dart获取js异步函数返回值的方式
+    //方式1：通过倒计时的方式
+    const timeout = const Duration(seconds: 30);
+    print("currentTimer =" + DateTime.now().toString());
+    Timer(timeout, () async {
+      //倒计时结束
+      var signM = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
+      Map<String,dynamic> sign = jsonDecode(signM);
+      print("sign--------");
+      print(sign['sign']);
+      if(sign['sign'] != "0"){
+        // Dio dio = new Dio();
+        XHttp.postJson("/bool-main/wallet/transfer",{
+          "chain": "BOOL",
+          "singedData":sign['sign'],
+        }).then((response) => {
+          if(response['code'] == 200){
+            ToastUtils.toast("转账成功"),
+          }else if(response['code'] == -100){
+            ToastUtils.toast("转账费用不够"),
+          }else{
+            ToastUtils.toast("转账失败"),
+          },
+          print(response),
+
+        });
+      }else{
+        ToastUtils.toast("签名超时！");
+      }
+      EasyLoading.dismiss();
+      print("afterTimer =" + DateTime.now().toString() );
+    });
+    //方式2：通过轮询的方式
     // while(sign=="0"){
     //   sign = await flutterWebViewPlugin.evalJavascript("wallet.getSign()");
     //   print("sign---"+sign);

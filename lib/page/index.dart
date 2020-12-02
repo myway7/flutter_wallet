@@ -10,6 +10,7 @@ import 'package:flutter_template/utils/provider.dart';
 import 'package:provider/provider.dart';
 
 import 'menu/menu_drawer.dart';
+import 'menu/settings.dart';
 
 class MainHomePage extends StatefulWidget {
   MainHomePage({Key key}) : super(key: key);
@@ -34,12 +35,12 @@ class _MainHomePageState extends State<MainHomePage> {
       ];
 
   List<Widget> getTabWidget(BuildContext context) => [
-        TabHomePage(),
-        // WalletHomePage(),
-        Center(child: Text(I18n.of(context).encyption)),
-        Center(child: Text(I18n.of(context).finan)),
-        Center(child: Text(I18n.of(context).message)),
-        Center(child: Text(I18n.of(context).set)),
+        TabHomePage(),//钱包的首页->账户
+        Center(child: Text(I18n.of(context).encyption)),//->加密云
+        Center(child: Text(I18n.of(context).finan)),//->金融
+        // Center(child: Text(I18n.of(context).set)),//->设置
+        SettingsPage(),//->设置
+
       ];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -78,39 +79,39 @@ class _MainHomePageState extends State<MainHomePage> {
                 PopupMenuButton<String>(
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<String>>[
+                          // PopupMenuItem<String>(
+                          //   value: "sponsor",
+                          //   child: ListTile(
+                          //     contentPadding:
+                          //         EdgeInsets.symmetric(horizontal: 10),
+                          //     leading: Icon(
+                          //       Icons.attach_money,
+                          //     ),
+                          //     title: Text(I18n.of(context).sponsor),
+                          //   ),
+                          // ),
                           PopupMenuItem<String>(
-                            value: "sponsor",
+                            value: "backWallet",
                             child: ListTile(
                               contentPadding:
                                   EdgeInsets.symmetric(horizontal: 10),
                               leading: Icon(
-                                Icons.attach_money,
+                                Icons.backup,
                               ),
-                              title: Text(I18n.of(context).sponsor),
+                              title: Text("备份钱包"),
                             ),
                           ),
-                          PopupMenuItem<String>(
-                            value: "settings",
-                            child: ListTile(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 10),
-                              leading: Icon(
-                                Icons.settings,
-                              ),
-                              title: Text(I18n.of(context).settings),
-                            ),
-                          ),
-                          PopupMenuItem<String>(
-                            value: "about",
-                            child: ListTile(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 10),
-                              leading: Icon(
-                                Icons.error_outline,
-                              ),
-                              title: Text(I18n.of(context).about),
-                            ),
-                          ),
+                          // PopupMenuItem<String>(
+                          //   value: "about",
+                          //   child: ListTile(
+                          //     contentPadding:
+                          //         EdgeInsets.symmetric(horizontal: 10),
+                          //     leading: Icon(
+                          //       Icons.error_outline,
+                          //     ),
+                          //     title: Text(I18n.of(context).about),
+                          //   ),
+                          // ),
                         ],
                     onSelected: (String action) {
                       XRouter.navigator.pushNamed('/menu/$action-page');

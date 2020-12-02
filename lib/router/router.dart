@@ -46,7 +46,7 @@ class XRouter {
           String address = params['address']?.first;
           return ReceivePage(address);
         }));
-    //接收token
+    //token交易
     router.define('/tokenSend', handler: Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {
           String address = params['address']?.first;

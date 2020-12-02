@@ -1,6 +1,8 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_template/core/http/http.dart';
+import 'package:flutter_template/core/utils/toast.dart';
 import 'package:flutter_template/router/router.dart';
 import 'package:flutter_template/utils/sputils.dart';
 import 'dart:convert';
@@ -80,17 +82,26 @@ class _WalletDetail extends State<WalletDetail>{
                         // data.balance != null ? new Text(""):new Text("00.000"),
                         new Container(
                           margin: EdgeInsets.only(top: 5),
-                          child: new Text("≈"+_balance),
+                          child: new Text("≈"+"${_balance != null ? _balance:0}"),
                         )
                       ],
                     ),
                     new Container(
                         margin: EdgeInsets.only(top: 50),
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            widget.address !=null ?new Text(widget.address.toString().replaceAll('"', ""),):new Text("null")
-                          ],
+                        child: new GestureDetector(
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              widget.address !=null
+                                  ?new Expanded(child:  new Text(widget.address.toString().replaceAll('"', ""),maxLines: 1,overflow: TextOverflow.ellipsis,))
+                                  :new Text("null")
+                            ],
+                          ),
+                          onTap: (){
+                            ClipboardData data = new ClipboardData(text:widget.address.toString().replaceAll('"', ""));
+                            Clipboard.setData(data);
+                            ToastUtils.toast("复制成功");
+                          },
                         )
                     ),
                     new Container(
@@ -126,7 +137,7 @@ class _WalletDetail extends State<WalletDetail>{
               Divider(color: Colors.grey,),
               new Expanded(
                 flex: 2,
-                child: new Text("下半部分"),
+                child: new Text("交易列表"),
               )
             ],
           ),

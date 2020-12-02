@@ -23,12 +23,12 @@ class _SponsorPageState extends State<SponsorPage> {
               Text(I18n.of(context).sponsorDescription,
                   style: TextStyle(color: Colors.grey[700], fontSize: 15)),
               SizedBox(height: 15),
-              _loadImage(
-                  "https://gitee.com/xuexiangjys/Resource/raw/master/img/pay/alipay.jpeg",
-                  linkUrl: "https://qr.alipay.com/fkx14433o4e5gqkhi9fsr2f"),
+              // _loadImage(
+              //     "https://gitee.com/xuexiangjys/Resource/raw/master/img/pay/alipay.jpeg",
+              //     linkUrl: "https://qr.alipay.com/fkx14433o4e5gqkhi9fsr2f"),
               SizedBox(height: 15),
-              _loadImage(
-                  "https://gitee.com/xuexiangjys/Resource/raw/master/img/pay/weixinpay.jpeg"),
+              // _loadImage(
+              //     "https://gitee.com/xuexiangjys/Resource/raw/master/img/pay/weixinpay.jpeg"),
             ])));
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_template/router/route_map.gr.dart';
 import 'package:flutter_template/router/router.dart';
 import 'package:flutter_template/utils/sputils.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'dart:io';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -168,25 +170,44 @@ class _RegisterPageState extends State<RegisterPage> {
     closeKeyboard(context);
     print("进入 CallJS");
     print("打印助记词");
-    const ETH = "ETH";
     const timeout = const Duration(seconds: 3);
     //FlutterWebviewPlugin是一个单例
     final flutterWebViewPlugin = FlutterWebviewPlugin();
-    flutterWebViewPlugin.evalJavascript("wallet.getMnemonic()").then((value) =>{
-      SPUtils.saveMnemonic(value),
-      print(value),
-      flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("$userName","$passwd",$value)').then((value) =>{
-      Timer(timeout, () async {
-      flutterWebViewPlugin.evalJavascript('wallet.getBoolAccount()').then((value) => {
-        SPUtils.saveBool(value),
-        XRouter.navigator.pushReplacementNamed(Routes.mainHomePage),
-        print("打印bool账户"),
-        print(value),
-        ToastUtils.toast("钱包创建成功，请注意不要忘记备份！"),
-      });
-    }),
+    flutterWebViewPlugin.evalJavascript("wallet.getMnemonic()").then((mnemonic) =>{
+      SPUtils.saveMnemonic(mnemonic),
+      print(mnemonic),
+      print(userName.toString()),
+      print("$passwd"),
+      ///因为不同平台对js返回来的数据有不同的解码方式，暂时没有想到更好的方式去处理
+      ///所以暂时针对不同平台进行相应的处理
+      if(Platform.isIOS){
+        //ios相关代码
+        flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("$userName","$passwd","${mnemonic.replaceAll("", "")}")').then((value) =>{
+          Timer(timeout, () async {
+            flutterWebViewPlugin.evalJavascript('wallet.getBoolAccount()').then((value) => {
+              SPUtils.saveBool(value),
+              XRouter.navigator.pushReplacementNamed(Routes.mainHomePage),
+              print("打印bool账户"),
+              print(value),
+              ToastUtils.toast("钱包创建成功，请注意不要忘记备份！"),
+            });
+          }),
+        }),
+      }else if(Platform.isAndroid){
+        //android相关代码
+        flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("$userName","$passwd",$mnemonic)').then((value) =>{
+          Timer(timeout, () async {
+            flutterWebViewPlugin.evalJavascript('wallet.getBoolAccount()').then((value) => {
+              SPUtils.saveBool(jsonDecode(value)),
+              XRouter.navigator.pushReplacementNamed(Routes.mainHomePage),
+              print("打印bool账户"),
+              print(jsonDecode(value)),
+              ToastUtils.toast("钱包创建成功，请注意不要忘记备份！"),
+            });
+          }),
+        }),
+      },
 
-      }),
 
     });
   }

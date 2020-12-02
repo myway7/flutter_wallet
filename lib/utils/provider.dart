@@ -119,16 +119,14 @@ class UserProfile with ChangeNotifier {
   }
 }
 
-///主页
+///账户
 const int TAB_HOME_INDEX = 0;
-///分类
+///加密云
 const int TAB_CATEGORY_INDEX = 1;
-///活动
+///金融
 const int TAB_ACTIVITY_INDEX = 2;
-///消息
-const int TAB_MESSAGE_INDEX = 3;
-///我的
-const int TAB_PROFILE_INDEX = 4;
+///设置
+const int TAB_PROFILE_INDEX = 3;
 
 ///应用状态
 class AppStatus with ChangeNotifier {

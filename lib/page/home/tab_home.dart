@@ -23,8 +23,10 @@ class _TabHomePageState extends State<TabHomePage> {
   int _count = 5;
   static Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
 
+
   @override
   Widget build(BuildContext context) {
+    // print(_boolList);
     return EasyRefresh.custom(
       header: MaterialHeader(),
       footer: MaterialFooter(),

@@ -15,8 +15,10 @@ import 'package:flutter_template/page/menu/register.dart';
 import 'package:flutter_template/page/menu/sponsor.dart';
 import 'package:flutter_template/page/menu/settings.dart';
 import 'package:flutter_template/page/menu/about.dart';
+import 'package:flutter_template/page/menu/back_wallet.dart';
 import 'package:flutter_template/page/menu/theme_color.dart';
 import 'package:flutter_template/page/menu/language.dart';
+import 'package:flutter_template/page/home/receive_page.dart';
 
 abstract class Routes {
   static const splashPage = '/';
@@ -26,8 +28,10 @@ abstract class Routes {
   static const sponsorPage = '/menu/sponsor-page';
   static const settingsPage = '/menu/settings-page';
   static const aboutPage = '/menu/about-page';
+  static const backWalletPage = '/menu/backWallet-page';
   static const themeColorPage = '/theme-color-page';
   static const languagePage = '/language-page';
+  static const receivePage = '/receive-page';
   static const all = {
     splashPage,
     mainHomePage,
@@ -36,8 +40,10 @@ abstract class Routes {
     sponsorPage,
     settingsPage,
     aboutPage,
+    backWalletPage,
     themeColorPage,
     languagePage,
+    receivePage,
   };
 }
 
@@ -108,6 +114,12 @@ class RouterMap extends RouterBase {
           pageBuilder: (context, animation, secondaryAnimation) => AboutPage(),
           settings: settings,
         );
+      case Routes.backWalletPage:
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              BackWalletPage(),
+          settings: settings,
+        );
       case Routes.themeColorPage:
         return PageRouteBuilder<dynamic>(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -120,6 +132,18 @@ class RouterMap extends RouterBase {
         return PageRouteBuilder<dynamic>(
           pageBuilder: (context, animation, secondaryAnimation) =>
               LanguagePage(),
+          settings: settings,
+          transitionsBuilder: getTransitions,
+          transitionDuration: const Duration(milliseconds: 800),
+        );
+      case Routes.receivePage:
+        if (hasInvalidArgs<ReceivePageArguments>(args, isRequired: true)) {
+          return misTypedArgsRoute<ReceivePageArguments>(args);
+        }
+        final typedArgs = args as ReceivePageArguments;
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              ReceivePage(typedArgs.address),
           settings: settings,
           transitionsBuilder: getTransitions,
           transitionDuration: const Duration(milliseconds: 800),
@@ -138,4 +162,10 @@ class RouterMap extends RouterBase {
 class MainHomePageArguments {
   final Key key;
   MainHomePageArguments({this.key});
+}
+
+//ReceivePage arguments holder class
+class ReceivePageArguments {
+  final String address;
+  ReceivePageArguments({@required this.address});
 }

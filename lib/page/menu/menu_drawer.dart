@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/toast.dart';
 import 'package:flutter_template/core/utils/xuifont.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_template/generated/i18n.dart';
 import 'package:flutter_template/router/route_map.gr.dart';
 import 'package:flutter_template/router/router.dart';
 import 'package:flutter_template/utils/provider.dart';
+import 'package:flutter_template/utils/sputils.dart';
 import 'package:provider/provider.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -14,6 +17,8 @@ class MenuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
+    // var accountName = jsonEncode(_boolList["keystore"]["name"]);
     return Consumer2<UserProfile, AppStatus>(builder: (BuildContext context,
         UserProfile value, AppStatus status, Widget child) {
       return Drawer(
@@ -35,15 +40,15 @@ class MenuDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text(
-                      value.nickName != null
-                          ? value.nickName
-                          : I18n.of(context).title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
+                    Text(""
+                      // value.nickName != null
+                      //     ? value.nickName
+                      //     : I18n.of(context).title,
+                      // style: TextStyle(
+                      //   fontWeight: FontWeight.bold,
+                      //   fontSize: 20,
+                      //   color: Colors.white,
+                      // ),
                     )
                   ],
                 ),
@@ -81,7 +86,7 @@ class MenuDrawer extends StatelessWidget {
                     selected: status.tabIndex == TAB_CATEGORY_INDEX,
                   ),
                   ListTile(
-                    leading: Icon(Icons.local_activity),
+                    leading: Icon(Icons.monetization_on),
                     title: Text(I18n.of(context).finan),
                     onTap: () {
                       status.tabIndex = TAB_ACTIVITY_INDEX;
@@ -90,16 +95,7 @@ class MenuDrawer extends StatelessWidget {
                     selected: status.tabIndex == TAB_ACTIVITY_INDEX,
                   ),
                   ListTile(
-                    leading: Icon(Icons.notifications),
-                    title: Text(I18n.of(context).message),
-                    onTap: () {
-                      status.tabIndex = TAB_MESSAGE_INDEX;
-                      Navigator.pop(context);
-                    },
-                    selected: status.tabIndex == TAB_MESSAGE_INDEX,
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.person),
+                    leading: Icon(Icons.settings),
                     title: Text(I18n.of(context).set),
                     onTap: () {
                       status.tabIndex = TAB_PROFILE_INDEX;
@@ -116,13 +112,13 @@ class MenuDrawer extends StatelessWidget {
                       XRouter.navigator.pushNamed(Routes.sponsorPage);
                     },
                   ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text(I18n.of(context).settings),
-                    onTap: () {
-                      XRouter.navigator.pushNamed(Routes.settingsPage);
-                    },
-                  ),
+                  // ListTile(
+                  //   leading: Icon(Icons.settings),
+                  //   title: Text(I18n.of(context).settings),
+                  //   onTap: () {
+                  //     XRouter.navigator.pushNamed(Routes.settingsPage);
+                  //   },
+                  // ),
                   ListTile(
                     leading: Icon(Icons.error_outline),
                     title: Text(I18n.of(context).about),

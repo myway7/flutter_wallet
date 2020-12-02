@@ -6,6 +6,7 @@ import 'package:flutter_template/page/home/wallet_detail.dart';
 import 'package:flutter_template/page/home/receive_page.dart';
 import 'package:flutter_template/page/index.dart';
 import 'package:flutter_template/page/menu/about.dart';
+import 'package:flutter_template/page/menu/back_wallet.dart';
 import 'package:flutter_template/page/menu/language.dart';
 import 'package:flutter_template/page/menu/login.dart';
 import 'package:flutter_template/page/menu/register.dart';
@@ -36,11 +37,12 @@ class $RouterMap {
   SettingsPage settingsPage;
   @CustomRoute(name: '/menu/about-page')
   AboutPage aboutPage;
+  @CustomRoute(name: '/menu/backWallet-page')
+  BackWalletPage backWalletPage;
 
   ThemeColorPage themeColorPage;
   LanguagePage languagePage;
   ReceivePage receivePage;
-  // WalletDetail walletDetail;
 }
 
 /// 认证处理
