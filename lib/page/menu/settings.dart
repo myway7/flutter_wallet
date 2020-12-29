@@ -1,3 +1,4 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_template/generated/i18n.dart';
 import 'package:flutter_template/router/route_map.gr.dart';
@@ -31,6 +32,16 @@ class _SettingPageState extends State<SettingsPage> {
             contentPadding: EdgeInsets.only(left: 20, right: 10),
             onTap: () {
               XRouter.navigator.pushNamed(Routes.languagePage);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.open_in_browser),
+            title: Text("打开H5界面"),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            contentPadding: EdgeInsets.only(left: 20, right: 10),
+            onTap: () {
+              ///打开h5页面
+              XRouter.router.navigateTo(context,"/web?url=123&title=h5",transition:TransitionType.inFromRight );
             },
           ),
         ])));

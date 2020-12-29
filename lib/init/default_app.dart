@@ -22,6 +22,7 @@ class DefaultApp {
   static void run() {
     WidgetsFlutterBinding.ensureInitialized();
     //runApp------->App入口
+    //SPUtils.init是一个异步函数
     SPUtils.init().then((value) => runApp(Store.init(MyApp())));
     initApp();
   }

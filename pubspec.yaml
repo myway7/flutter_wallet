@@ -62,6 +62,8 @@ flutter:
   assets:
   - assets/
   - assets/js/main.js
+  - assets/test.js
+  - assets/html_code.html
 
   fonts:
     - family: xuifont  #指定一个字体名

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1 align="center">dapp</h1>
+<button onclick="callFlutter()">callFlutter</button>
+<script>
+  function callFlutter(){
+	  native.test().then(res=>{console.log(JSON.stringify(res))});
+  }
+  </script>
+
+</body>
+</html>

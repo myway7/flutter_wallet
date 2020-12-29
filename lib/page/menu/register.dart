@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_template/core/http/http.dart';
 import 'package:flutter_template/core/utils/toast.dart';
@@ -45,10 +46,12 @@ class _RegisterPageState extends State<RegisterPage> {
           // 点击空白页面关闭键盘
           closeKeyboard(context);
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-          child: buildForm(context),
-        ),
+         child: FlutterEasyLoading(
+           child: new Container(
+             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+             child: buildForm(context),
+           ),
+         ),
       ),
     );
   }
@@ -168,6 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
   //创建钱包
   void createWallet( BuildContext context,String userName,String passwd){
     closeKeyboard(context);
+    EasyLoading.show(status: '正在创建...');
     print("进入 CallJS");
     print("打印助记词");
     const timeout = const Duration(seconds: 3);
@@ -194,6 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
           }),
         }),
       }else if(Platform.isAndroid){
+        print("android"),
         //android相关代码
         flutterWebViewPlugin.evalJavascript('wallet.generateBoolAccount("$userName","$passwd",$mnemonic)').then((value) =>{
           Timer(timeout, () async {
@@ -207,8 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
           }),
         }),
       },
-
-
+      EasyLoading.dismiss(),
     });
   }
 

@@ -7,35 +7,42 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_template/core/http/http.dart';
 import 'package:flutter_template/core/utils/toast.dart';
 import 'package:flutter_template/core/widget/loading_page.dart';
+import 'package:flutter_template/router/router.dart';
 import 'package:flutter_template/utils/sputils.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'dart:io';
 
 class SendPage extends StatefulWidget {
   final String address;
-  SendPage(this.address);
+  final String type;
+  final String rpcUrl;
+  SendPage(this.address,this.type,this.rpcUrl);
   @override
-  _SendPage createState() {
-    return new _SendPage();
+  _SendPageState createState() {
+    return new _SendPageState();
   }
 }
 
-class _SendPage extends State{
+class _SendPageState extends State<SendPage>{
   FocusNode blankNode = FocusNode();
   double gasValue = 0;
   TextEditingController _toAddressController = TextEditingController();
   TextEditingController _enterAmountController = TextEditingController();
   // TextEditingController _gasValueController = TextEditingController();
+  TextEditingController _passwdAmountController = TextEditingController();
   @override
   initState() {
     super.initState();
+    print(widget.address);
+    print(widget.type);
+    print(widget.rpcUrl);
   }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return FlutterEasyLoading(child:new Scaffold(
       appBar: AppBar(
-        title: new Text("转账",style: TextStyle(fontSize: 18),),
+        title: new Text(widget.type+"转账",style: TextStyle(fontSize: 18),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back,size: 24,),
           onPressed: ()=>{
@@ -45,6 +52,7 @@ class _SendPage extends State{
           },
         ),
       ),
+      resizeToAvoidBottomPadding: false,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: (){
@@ -155,13 +163,46 @@ class _SendPage extends State{
                         child: new Text("确认"),
                         onPressed: ()=>{
                         FocusScope.of(context).requestFocus(FocusNode()),
-                          //对用户输入的信息进行校验
-                        if(Platform.isAndroid){
-                          getSignForAndroid(),
-                        }else if(Platform.isIOS){
-                          getSignForIOS(),
-                        },
+                        if(_toAddressController.text != "" && _enterAmountController.text !="" ){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('请输入密码'),
+                                  content: TextField(
+                                    autofocus: false,
+                                    controller: _passwdAmountController,
+                                    decoration: InputDecoration(
+                                      // labelText: "toAddress",
+                                      hintText: "type your passwd",
+                                      prefixIcon: Icon(Icons.lock),
+                                      // border: InputBorder.none //隐藏下划线
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(child: Text('取消'),onPressed: (){
+                                      Navigator.pop(context);
+                                      //取消处理
+                                    },),
+                                    FlatButton(child: Text('确认'),onPressed: (){
+                                      print(_passwdAmountController.text);
+                                      //确认处理
+                                      Navigator.pop(context);
+                                      // 对用户输入的信息进行校验临时写法
+                                      if(Platform.isAndroid){
+                                        getSignForAndroid();
+                                      }else if(Platform.isIOS){
+                                        getSignForIOS();
+                                      }
 
+                                    },),
+                                  ],
+                                );
+                              }),
+
+                        }else{
+                          ToastUtils.toast("输入不能为空"),
+                        }
                           //todo
 
                         },
@@ -180,13 +221,10 @@ class _SendPage extends State{
    void getSignForAndroid() async{
     Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
     var  keyStore = jsonEncode(_boolList["keystore"]);
-    var paswwd = "123456";
-    var type = "BOOL";
-    var rpcUrl="wss://rpc-bool.bool.network";
     var amout = _enterAmountController.text.toString();
     var to = _toAddressController.text.toString();
-    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "BOOL","rpcUrl":"wss://rpc-bool.bool.network","amout":"$amout","to":"$to"}';
-
+    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "${widget.type}","rpcUrl":"${widget.rpcUrl}","amout":"$amout","to":"$to"}';
+    print(widget.type);
     // startSign(password,keyStore,type,rpcUrl,amount,to)
     // $paswd,$keyStore,$type,$rpcUrl,$amout,$to
     final flutterWebViewPlugin = FlutterWebviewPlugin();
@@ -206,12 +244,12 @@ class _SendPage extends State{
       print("sign--------");
       print(sign);
       if(sign['sign'] != "0"){
-        // Dio dio = new Dio();
         XHttp.postJson("/bool-main/wallet/transfer",{
-          "chain": "BOOL",
+          "chain": widget.type,
           "singedData":sign['sign'],
         }).then((response) => {
           if(response['code'] == 200){
+            Navigator.pop(context),
             ToastUtils.toast("转账成功"),
           }else if(response['code'] == -100){
             ToastUtils.toast("转账费用不够"),
@@ -239,12 +277,9 @@ class _SendPage extends State{
     Map<String,dynamic> _boolList = jsonDecode(SPUtils.getBool());
     var  keyStore = jsonEncode(_boolList["keystore"]);
     print(keyStore);
-    var paswwd = "123456";
-    var type = "BOOL";
-    var rpcUrl="wss://rpc-bool.bool.network";
     var amout = _enterAmountController.text.toString();
     var to = _toAddressController.text.toString();
-    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "BOOL","rpcUrl":"wss://rpc-bool.bool.network","amout":"$amout","to":"$to"}';
+    var data= '{"passwd": "123456","keyStore":$keyStore,"type": "${widget.type}","rpcUrl":"${widget.rpcUrl}","amout":"$amout","to":"$to"}';
 
     // startSign(password,keyStore,type,rpcUrl,amount,to)
     // $paswd,$keyStore,$type,$rpcUrl,$amout,$to
@@ -271,6 +306,7 @@ class _SendPage extends State{
           "singedData":sign['sign'],
         }).then((response) => {
           if(response['code'] == 200){
+            Navigator.pop(context),
             ToastUtils.toast("转账成功"),
           }else if(response['code'] == -100){
             ToastUtils.toast("转账费用不够"),

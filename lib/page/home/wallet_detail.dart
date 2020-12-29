@@ -11,7 +11,8 @@ class WalletDetail extends StatefulWidget{
   final String tokenName;
   final String address;
   final String imageUrl;
-  WalletDetail(this.tokenName,this.address,this.imageUrl);
+  final String rpcUrl;
+  WalletDetail(this.tokenName,this.address,this.imageUrl,this.rpcUrl);
   @override
   _WalletDetail createState() => _WalletDetail();
 }
@@ -22,8 +23,10 @@ class _WalletDetail extends State<WalletDetail>{
   @override
   initState() {
     super.initState();
+    print("token详情页面");
     print(widget.address);
     print(widget.imageUrl);
+    print(widget.rpcUrl);
     XHttp.postJson("/bool-main/wallet/assets",
         {
           "legalCurrency": "USD",
@@ -93,7 +96,7 @@ class _WalletDetail extends State<WalletDetail>{
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               widget.address !=null
-                                  ?new Expanded(child:  new Text(widget.address.toString().replaceAll('"', ""),maxLines: 1,overflow: TextOverflow.ellipsis,))
+                                  ?new Expanded(child:  new Text(widget.address.toString().replaceAll('"', ""),maxLines: 1,overflow: TextOverflow.ellipsis,textAlign:TextAlign.center ,))
                                   :new Text("null")
                             ],
                           ),
@@ -124,7 +127,7 @@ class _WalletDetail extends State<WalletDetail>{
                             child: new RaisedButton(
                               child: new Text("转账"),
                               onPressed: ()=>{
-                                XRouter.router.navigateTo(context, "/tokenSend?address=${Uri.encodeComponent(widget.address.toString().replaceAll('"', ""))}",transition: TransitionType.inFromRight)
+                                XRouter.router.navigateTo(context, "/tokenSend?address=${Uri.encodeComponent(widget.address.toString().replaceAll('"', ""))}&type=${Uri.encodeComponent(widget.tokenName)}&rpcUrl=${Uri.encodeComponent(widget.rpcUrl)}",transition: TransitionType.inFromRight)
                               },
                             ),
                           )

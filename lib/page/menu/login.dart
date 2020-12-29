@@ -27,13 +27,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    if (!SPUtils.isAgreePrivacy()) {
-      PrivacyUtils.showPrivacyDialog(context, onAgressCallback: () {
-        Navigator.of(context).pop();
-        SPUtils.saveIsAgreePrivacy(true);
-        ToastUtils.success(I18n.of(context).agreePrivacy);
-      });
-    }
+    //隐私协议
+    // if (!SPUtils.isAgreePrivacy()) {
+    //   PrivacyUtils.showPrivacyDialog(context, onAgressCallback: () {
+    //     Navigator.of(context).pop();
+    //     SPUtils.saveIsAgreePrivacy(true);
+    //     ToastUtils.success(I18n.of(context).agreePrivacy);
+    //   });
+    // }
   }
 
   @override

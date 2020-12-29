@@ -63,6 +63,7 @@ class _TabHomePageState extends State<TabHomePage> {
                   tokenName: info.tokenName,
                   address: info.address,
                   balance: info.balance,
+                  rpcUrl: info.rpcUrl,
                  );
             },
             childCount: _count,
@@ -72,75 +73,41 @@ class _TabHomePageState extends State<TabHomePage> {
     );
   }
 
-  //这里是演示，所以写死
-  // final List<String> urls = [
-  //   "http://photocdn.sohu.com/tvmobilemvms/20150907/144160323071011277.jpg", //伪装者:胡歌演绎"痞子特工"
-  //   "http://photocdn.sohu.com/tvmobilemvms/20150907/144158380433341332.jpg", //无心法师:生死离别!月牙遭虐杀
-  //   "http://photocdn.sohu.com/tvmobilemvms/20150907/144160286644953923.jpg", //花千骨:尊上沦为花千骨
-  //   "http://photocdn.sohu.com/tvmobilemvms/20150902/144115156939164801.jpg", //综艺饭:胖轩偷看夏天洗澡掀波澜
-  //   "http://photocdn.sohu.com/tvmobilemvms/20150907/144159406950245847.jpg", //碟中谍4:阿汤哥高塔命悬一线,超越不可能
-  // ];
-
-  // Widget getBannerWidget() {
-  //   return SizedBox(
-  //     height: 200,
-  //     child: Swiper(
-  //       autoplay: true,
-  //       duration: 2000,
-  //       autoplayDelay: 5000,
-  //       itemBuilder: (context, index) {
-  //         return Container(
-  //           color: Colors.transparent,
-  //           child: ClipRRect(
-  //               borderRadius: BorderRadius.circular(0),
-  //               child: Image(
-  //                 fit: BoxFit.fill,
-  //                 image: CachedNetworkImageProvider(
-  //                   urls[index],
-  //                 ),
-  //               )),
-  //         );
-  //       },
-  //       onTap: (value) {
-  //         ToastUtils.toast("点击--->" + value.toString());
-  //       },
-  //       itemCount: urls.length,
-  //       pagination: SwiperPagination(),
-  //     ),
-  //   );
-  // }
-
-
   final List<TokenInfo> tokens = [
     TokenInfo(
       'https://api.bool.network/bool-backstage/pic/token?c=BTC',
       'BTC',
       _boolList["btcAccount"]!= null?_boolList["btcAccount"]:"",
-      '0'
+      '0',
+      "http://btc:btc@bitcoin-core-testnet.blockchain-node"
       ,),
     TokenInfo(
         'https://api.bool.network/bool-backstage/pic/token?c=ETH',
         'ETH',
-      _boolList["ethAccount"]!= null?_boolList["ethAccount"]:"",
-        '0'
+        _boolList["ethAccount"]!= null?_boolList["ethAccount"]:"",
+          '0',
+        "http://test-rpc-eth.blockchain-node"
       ,),
     TokenInfo(
-      'https://api.bool.network/bool-backstage/pic/token?c=BOOL',
-      'BOOL',
-      _boolList["boolAccount"] != null?_boolList["boolAccount"]:"",
-      '0'
+        'https://api.bool.network/bool-backstage/pic/token?c=BOOL',
+        'BOOL',
+        _boolList["boolAccount"] != null?_boolList["boolAccount"]:"",
+        '0',
+        "ws://test-rpc-bool.buer.network:789"
       ,),
     TokenInfo(
-      'https://api.bool.network/bool-backstage/pic/token?c=FIL',
-      'FIL',
-      _boolList["filAccount"] != null?_boolList["filAccount"]:"",
-      '0'
+        'https://api.bool.network/bool-backstage/pic/token?c=FIL',
+        'FIL',
+        _boolList["filAccount"] != null?_boolList["filAccount"]:"",
+        '0',
+        "http://test-rpc-fil.buer.network:789/rpc/v0"
       ,),
     TokenInfo(
-      'https://api.bool.network/bool-backstage/pic/token?c=PAD',
-      'PAD',
-      _boolList["padAccount"] != null?_boolList["padAccount"]:"",
-      '0'
+        'https://api.bool.network/bool-backstage/pic/token?c=PAD',
+        'PAD',
+        _boolList["padAccount"] != null?_boolList["padAccount"]:"",
+        '0',
+        ""
       ,),
   ];
 }

@@ -38,7 +38,8 @@ class XRouter {
           String tokenName = params['tokenName']?.first;
           String address = params['address']?.first;
           String url = params['imageUrl']?.first;
-          return WalletDetail(tokenName,address, url);
+          String rpc = params['rpcUrl']?.first;
+          return WalletDetail(tokenName,address, url,rpc);
         }));
     //接收token
     router.define('/tokenReceive', handler: Handler(
@@ -50,7 +51,9 @@ class XRouter {
     router.define('/tokenSend', handler: Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {
           String address = params['address']?.first;
-          return SendPage(address);
+          String type = params['type']?.first;
+          String rpcUrl = params['rpcUrl']?.first;
+          return SendPage(address,type,rpcUrl);
         }));
   }
 
